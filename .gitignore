@@ -2,5 +2,12 @@ a.out
 *.mod
 *.o
 *.log
+*.dat
 probabilities.dat
 *~
+*d_random_walk.tex
+*.aux
+*.eps
+*.bak
+*-inc-eps*
+build

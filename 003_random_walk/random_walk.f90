@@ -4,23 +4,35 @@ program random_walk_program
   
   implicit none
 
-  integer(i4), parameter :: d = 1 !  dimensions
-  integer(i4), parameter :: Max_steps = 1000, N_walkers = 500, N_experiments = 500
-  integer(i4), dimension(d), parameter :: zero = 0
-  integer(i4) :: Max_steps_array(1000)
-  real(dp), parameter :: p = 1.0_dp/2
+  integer(i4) :: d !  dimensions
+  integer(i4) :: Max_steps, N_walkers, N_experiments
+  namelist /parameters/ d, Max_steps, N_walkers, N_experiments 
+  integer(i4), allocatable :: Max_steps_array(:)
+  real(dp), parameter :: p = 0.5_dp
 
-  integer(i4) :: walker(d,N_walkers)
-  real(dp) :: probability_of_return(N_experiments)
+  integer(i4), allocatable :: walker(:,:)
+  real(dp), allocatable :: probability_of_return(:)
   integer(i4) :: i_steps, i_walker, i_experiments,counter,k,i,l, ounit, index
-  
+
+  integer(i4) :: inunit
   real(dp) :: r
 
   logical :: condition
 
+
+  open(newunit = inunit,file = 'parameters.nml')
+
+  read(inunit,nml = parameters)
+  close(inunit)
+  write(*,nml = parameters)
+  
+  allocate(Max_steps_array(Max_steps))
+  allocate(walker(d,N_walkers))
+  allocate(probability_of_return(N_experiments))
+  
   max_steps_array = [(i*10,i=1,size(Max_steps_array))]
   !max_steps_array(31:50) = [(i*100,i=31,50)]
-  open(newunit = ounit, file = 'probabilities.dat')
+  open(newunit = ounit, file = int2str(d)//'d_probabilities.dat')
 
   max_step: do k = 1, size(max_steps_array)
      experiments: do i_experiments = 1, N_experiments
@@ -101,5 +113,16 @@ contains
     random_choice = floor(r*n)+1
     
   end function random_choice
+
+  function int2str(i)
+    character(:),allocatable :: int2str
+    character(20) :: k
+    integer(i4), intent(in) :: i
+
+    write(k,*) i
+
+    int2str = trim(adjustl(k))
+    
+  end function int2str
   
 end program random_walk_program

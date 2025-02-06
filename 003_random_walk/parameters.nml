@@ -1,0 +1,7 @@
+&parameters
+!dimension
+d = 1
+Max_steps = 500
+N_walkers = 200
+N_experiments = 500
+/
