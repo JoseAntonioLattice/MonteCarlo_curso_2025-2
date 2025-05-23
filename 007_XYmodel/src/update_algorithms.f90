@@ -48,13 +48,16 @@ contains
     integer(i4), intent(in) :: clusters(:)
     real(dp), intent(in) :: r(2)
     integer :: i
-    real(dp) :: u, p(size(clusters))
+    real(dp) :: u
+    real(dp), allocatable :: p(:)
 
+
+    allocate(p(maxval(clusters)))
     call random_number(p)  
     do i = 1, size(spin(1,:))
        if(p(clusters(i)) < 0.5_dp) spin(:,i) = flip(spin(:,i),r)
     end do
-    
+    deallocate(p)
   end subroutine flip_clusters
 
   function flip(spin,r)
@@ -74,7 +77,7 @@ contains
     
     bond = 0
     do i = 1, size(bond)
-       DHx = dot_product(spin(:,i),spin(:,ip(i))) + dot_product(flip(spin(:,i),r),spin(:,ip(i)))
+       DHx = dot_product(-flip(spin(:,i),r)+spin(:,i),spin(:,ip(i))) !+ dot_product(flip(spin(:,i),r),spin(:,ip(i)))
        if( DHx > 0.0_dp )then
           call random_number(u)
           if(u <= 1.0_dp - exp(-beta*DHx)) bond(i) = 1
